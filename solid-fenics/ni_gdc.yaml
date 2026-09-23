@@ -1,0 +1,54 @@
+description: Ni-GDC SOFC electrochemical mechanism
+cantera-version: 3.0.0
+
+phases:
+  - name: Ni_Bulk
+    thermo: fixed-stoichiometry
+    species: [e_pair]
+
+  - name: LSCF_Bulk
+    thermo: fixed-stoichiometry
+    species: [e_pair]
+
+  - name: GDC_Bulk
+    thermo: fixed-stoichiometry
+    species: [O_ion]
+
+  - name: Anode_TPB
+    thermo: edge
+    adjacent-phases: [gri30, Ni_Bulk, GDC_Bulk]
+    kinetics: edge
+    reactions: [anode_reactions]
+
+  - name: Cathode_TPB
+    thermo: edge
+    adjacent-phases: [gri30, LSCF_Bulk, GDC_Bulk]
+    kinetics: edge
+    reactions: [cathode_reactions]
+
+species:
+  - name: e_pair
+    composition: {E: 2}
+    thermo:
+      model: constant-cp
+      T0: 298.15
+      h0: 0.0 J/mol
+      s0: 0.0 J/mol/K
+      cp0: 0.0 J/mol/K
+
+  - name: O_ion
+    composition: {O: 1, E: 2}
+    thermo:
+      model: constant-cp
+      T0: 298.15
+      h0: -1.04e6 J/mol 
+      s0: 60.0 J/mol/K
+      cp0: 50.0 J/mol/K
+
+anode_reactions:
+  - equation: H2 + O_ion <=> H2O + e_pair
+    rate-constant: {A: 3.0e10, b: 0.0, Ea: 57890.0 J/mol}
+
+cathode_reactions:
+  - equation: 0.5 O2 + e_pair <=> O_ion
+    rate-constant: {A: 5.0e10, b: 0.0, Ea: 110000.0 J/mol}

@@ -1,0 +1,113 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+
+thermoType
+{
+    type            hePsiThermo;
+    mixture         multiComponentMixture;
+    transport       sutherland;
+    thermo          janaf;
+    equationOfState perfectGas;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+species
+(
+    H2
+    O2
+    H2O
+    N2
+);
+
+inertSpecie     N2;
+
+H2
+{
+    specie
+    {
+        molWeight       2.01588;
+    }
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           3500;
+        Tcommon         1000;
+        highCpCoeffs    ( 2.991423 7.000644e-04 -5.633829e-08 -9.231578e-12 1.582752e-15 -835.0340 1.355146 );
+        lowCpCoeffs     ( 2.344331 7.980521e-03 -1.947815e-05 2.015721e-08 -7.376118e-12 -917.9351 0.6830102 );
+    }
+    transport
+    {
+        As              6.48e-07;
+        Ts              72.0;
+    }
+}
+
+O2
+{
+    specie
+    {
+        molWeight       31.9988;
+    }
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           3500;
+        Tcommon         1000;
+        highCpCoeffs    ( 3.282538 1.483088e-03 -7.579666e-07 2.094706e-10 -2.167178e-14 -1088.458 5.453231 );
+        lowCpCoeffs     ( 3.782456 -2.996734e-03 9.847302e-06 -9.681295e-09 3.243728e-12 -1063.944 3.657676 );
+    }
+    transport
+    {
+        As              1.67212e-06;
+        Ts              170.672;
+    }
+}
+
+H2O
+{
+    specie
+    {
+        molWeight       18.0153;
+    }
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           3500;
+        Tcommon         1000;
+        highCpCoeffs    ( 3.033992 2.176918e-03 -1.640725e-07 -9.704200e-11 1.682010e-14 -30004.30 4.966770 );
+        lowCpCoeffs     ( 4.198640 -2.036434e-03 6.520402e-06 -5.487971e-09 1.771978e-12 -30293.72 -0.731510 );
+    }
+    transport
+    {
+        As              1.67212e-06;
+        Ts              1056.4;
+    }
+}
+
+N2
+{
+    specie
+    {
+        molWeight       28.0134;
+    }
+    thermodynamics
+    {
+        Tlow            200;
+        Thigh           3500;
+        Tcommon         1000;
+        highCpCoeffs    ( 2.926640 1.487977e-03 -5.684761e-07 1.009704e-10 -6.753351e-15 -922.7977 5.980528 );
+        lowCpCoeffs     ( 3.298677 1.408240e-03 -3.963222e-06 5.641515e-09 -2.444855e-12 -1020.900 3.950372 );
+    }
+    transport
+    {
+        As              1.458e-06;
+        Ts              110.4;
+    }
+}

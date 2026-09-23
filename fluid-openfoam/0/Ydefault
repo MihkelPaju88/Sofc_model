@@ -1,0 +1,18 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      Ydefault;
+}
+dimensions      [0 0 0 0 0 0 0];
+internalField   uniform 0;
+boundaryField
+{
+    inlet       { type zeroGradient; }
+    outlet      { type zeroGradient; }
+    front       { type empty; }
+    back        { type empty; }
+    axis        { type empty; }
+    outer_wall  { type zeroGradient; }
+}

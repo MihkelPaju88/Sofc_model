@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Simulation output & meshes
+*.xdmf
+*.h5
+*.csv
+precice-run/
+
+# OpenFOAM logs & post-processing
+postProcessing/
+log.*
+
+# OpenFOAM generated time steps (exclude all numbers, keep initial conditions)
+fluid-openfoam/[0-9]*/
+!fluid-openfoam/0/
+!fluid-openfoam/0.orig/
+!fluid-openfoam/0/**
+!fluid-openfoam/0.orig/**

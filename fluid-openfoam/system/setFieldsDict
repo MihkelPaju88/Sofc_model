@@ -1,0 +1,33 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      setFieldsDict;
+}
+
+// 1. By default, fill the entire domain (Air Channel) with Air
+defaultFieldValues
+(
+    volScalarFieldValue H2  0.0
+    volScalarFieldValue H2O 0.0
+    volScalarFieldValue O2  0.233
+    volScalarFieldValue N2  0.767
+);
+
+// 2. Overwrite the bottom half of the mesh (Fuel Channel) with Fuel
+regions
+(
+    boxToCell
+    {
+        // Bounding box strictly covering y = 0 to y = 0.001
+        box (-1 -1 -1) (1 0.001005 1);
+        fieldValues
+        (
+            volScalarFieldValue H2  0.97
+            volScalarFieldValue H2O 0.03
+            volScalarFieldValue O2  0.0
+            volScalarFieldValue N2  0.0
+        );
+    }
+);

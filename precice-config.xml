@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<precice-configuration>
+  <log>
+    <sink type="stream" output="stdout" filter="%Severity% > debug" format="---[precice] %ColorizedSeverity% %Message%" enabled="true" />
+  </log>
+
+  <!-- The exact variables being passed between domains -->
+  <data:scalar name="Temperature" />
+  <data:scalar name="Heat-Flux" />
+  <data:scalar name="H2" />
+  <data:scalar name="O2" />
+  <data:scalar name="H2O" />
+
+  <!-- OpenFOAM Mesh Definition -->
+  <mesh name="Fluid-Mesh" dimensions="3">
+    <use-data name="Temperature" />
+    <use-data name="Heat-Flux" />
+    <use-data name="H2" />
+    <use-data name="O2" />
+    <use-data name="H2O" />
+  </mesh>
+
+  <!-- FEniCS Mesh Definition -->
+  <mesh name="Solid-Mesh" dimensions="3">
+    <use-data name="Temperature" />
+    <use-data name="Heat-Flux" />
+    <use-data name="H2" />
+    <use-data name="O2" />
+    <use-data name="H2O" />
+  </mesh>
+
+ <!-- Participant 1: OpenFOAM -->
+  <participant name="Fluid">
+    <provide-mesh name="Fluid-Mesh" />
+    <receive-mesh name="Solid-Mesh" from="Solid" />
+    
+    <!-- What OpenFOAM provides -->
+    <write-data name="Temperature" mesh="Fluid-Mesh" />
+    <write-data name="H2" mesh="Fluid-Mesh" />
+    <write-data name="O2" mesh="Fluid-Mesh" />
+    <write-data name="H2O" mesh="Fluid-Mesh" />
+    
+    <!-- What OpenFOAM receives -->
+    <read-data name="Heat-Flux" mesh="Fluid-Mesh" />
+    
+    <!-- Map OpenFOAM's 3D wedge to FEniCS's 2D flat grid -->
+    <mapping:nearest-neighbor direction="write" from="Fluid-Mesh" to="Solid-Mesh" constraint="consistent" />
+  </participant>
+
+  <!-- Participant 2: FEniCS / Cantera -->
+  <participant name="Solid">
+    <provide-mesh name="Solid-Mesh" />
+    
+    <!-- What FEniCS provides -->
+    <write-data name="Heat-Flux" mesh="Solid-Mesh" />
+    
+    <!-- What FEniCS receives -->
+    <read-data name="Temperature" mesh="Solid-Mesh" />
+    <read-data name="H2" mesh="Solid-Mesh" />
+    <read-data name="O2" mesh="Solid-Mesh" />
+    <read-data name="H2O" mesh="Solid-Mesh" />
+  </participant>
+
+  <!-- Communication protocol (Local memory sockets) -->
+  <m2n:sockets acceptor="Fluid" connector="Solid" exchange-directory="/home/galt/sofc_model" />
+
+  <!-- The Coupling Algorithm -->
+  <coupling-scheme:serial-implicit>
+    <time-window-size value="0.001" />
+    <max-time value="3.0" />
+    <participants first="Fluid" second="Solid" />
+    
+    <exchange data="Temperature" mesh="Solid-Mesh" from="Fluid" to="Solid" />
+    <exchange data="H2" mesh="Solid-Mesh" from="Fluid" to="Solid" />
+    <exchange data="O2" mesh="Solid-Mesh" from="Fluid" to="Solid" />
+    <exchange data="H2O" mesh="Solid-Mesh" from="Fluid" to="Solid" />
+    <exchange data="Heat-Flux" mesh="Solid-Mesh" from="Solid" to="Fluid" />
+    
+    <max-iterations value="50" />
+    <relative-convergence-measure limit="1e-4" data="Temperature" mesh="Solid-Mesh" />
+  </coupling-scheme:serial-implicit>
+</precice-configuration>

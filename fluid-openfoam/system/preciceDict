@@ -1,0 +1,40 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      preciceDict;
+}
+
+preciceConfig "../precice-config.xml";
+participant   Fluid;
+modules       (FF);
+
+interfaces
+{
+    Solid_Interface
+    {
+        mesh              Fluid-Mesh;
+        patches           (anode_interface cathode_interface); // Explicitly maps to the boundaries
+        locations         faceNodes; // Forces data extraction at the exact Cartesian mesh vertices
+    }
+}
+
+FF
+{
+    readData
+    {
+        Heat-Flux
+        {
+            name Heat-Flux;
+        }
+    }
+    
+    writeData
+    {
+        Temperature { name T; }
+        H2          { name H2; }
+        O2          { name O2; }
+        H2O         { name H2O; }
+    }
+}

@@ -1,0 +1,50 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+convertToMeters 1.0;
+
+vertices
+(
+    // Fuel Channel (Anode Side: y = 0.0 to 0.001)
+    (0 0 -0.00005)      (0.05 0 -0.00005)       // 0, 1
+    (0 0  0.00005)      (0.05 0  0.00005)       // 2, 3
+    (0 0.001 -0.00005)  (0.05 0.001 -0.00005)   // 4, 5
+    (0 0.001  0.00005)  (0.05 0.001  0.00005)   // 6, 7
+
+    // Air Channel (Cathode Side: y = 0.00101 to 0.003)
+    // Note: The 10-micron gap (0.001 to 0.00101) is reserved purely for the FEniCS solid mesh
+    (0 0.00101 -0.00005) (0.05 0.00101 -0.00005) // 8, 9
+    (0 0.00101  0.00005) (0.05 0.00101  0.00005) // 10, 11
+    (0 0.003 -0.00005)   (0.05 0.003 -0.00005)   // 12, 13
+    (0 0.003  0.00005)   (0.05 0.003  0.00005)   // 14, 15
+);
+
+blocks
+(
+    hex (0 1 5 4 2 3 7 6) fuel_channel (50 20 1) simpleGrading (1 1 1)
+    hex (8 9 13 12 10 11 15 14) air_channel (50 20 1) simpleGrading (1 1 1)
+);
+
+edges
+();
+
+boundary
+(
+    fuel_inlet { type patch; faces ((0 4 6 2)); }
+    fuel_outlet { type patch; faces ((1 3 7 5)); }
+    anode_interface { type patch; faces ((4 5 7 6)); } // Couples to FEniCS bottom_dofs
+    bottom_wall { type wall; faces ((0 2 3 1)); }
+
+    air_inlet { type patch; faces ((8 12 14 10)); }
+    air_outlet { type patch; faces ((9 11 15 13)); }
+    cathode_interface { type patch; faces ((8 10 11 9)); } // Couples to FEniCS top_dofs
+    top_wall { type wall; faces ((12 13 15 14)); }
+
+    front { type empty; faces ((2 3 7 6) (10 11 15 14)); }
+    back { type empty; faces ((0 4 5 1) (8 12 13 9)); }
+);
